@@ -9,7 +9,7 @@ std::string ShaderLoader::loadShader(const std::filesystem::path& path)
 
     if (!file.is_open())
     {
-        fmt::print(fg(fmt::color::red), "Error loading shader!\nShader path incorect!\n");
+        fmt::print(fg(fmt::color::red), "Error loading shader!\nShader path incorect!\nPath: {}", path.string());
         return {};
     }
 
