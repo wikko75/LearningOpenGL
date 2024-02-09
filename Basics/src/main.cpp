@@ -5,7 +5,7 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 #include "utils.hpp"
-#include "ShaderLoader.hpp"
+#include "Shader.hpp"
 
 
 int main()
@@ -43,34 +43,11 @@ int main()
     glfwSetFramebufferSizeCallback(window, windowFramebufferSizeCallback);
 
 
-    // ==================== shaders setup ==========================
 
-    GLuint vertexShader { glCreateShader(GL_VERTEX_SHADER) };
-    std::string vertexShaderData { ShaderLoader::loadShader(std::filesystem::current_path() / "shaders" / "triangleVertex.glsl") };
-    const char* vertexShader_src {vertexShaderData.c_str()};
-    glShaderSource(vertexShader, 1, &vertexShader_src, NULL);
-    glCompileShader(vertexShader);
+    // ==================== shader setup ==========================
 
-    shaderStatusLogger(vertexShader);
-
-    GLuint fragmentShader { glCreateShader(GL_FRAGMENT_SHADER) };
-    std::string fragmentShaderData { ShaderLoader::loadShader(std::filesystem::current_path() / "shaders" / "triangleFragment.glsl") };
-    const char* fragmentShader_src { fragmentShaderData.c_str() };
-    glShaderSource(fragmentShader, 1, &fragmentShader_src, NULL);
-    glCompileShader(fragmentShader);
-
-    shaderStatusLogger(fragmentShader);
-
-    // linking shaders
-    GLuint program { glCreateProgram() };
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-
-    programStatusLogger(program);
-
-    glDeleteShader(vertexShader);  
-    glDeleteShader(fragmentShader);
+    Shader trianglesShader { std::filesystem::current_path() / "shaders" / "triangleVertex.glsl",
+                             std::filesystem::current_path() / "shaders" / "triangleFragment.glsl" };
 
 
     float upperTrianglesData[] = {
@@ -114,8 +91,16 @@ int main()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    
 
+    GLuint indices[] = {
+        0, 4, 2,
+        2, 4, 5
+    };
+
+    GLuint EBO {};
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     GLuint VAO_2 {};
     glCreateVertexArrays(1, &VAO_2);
@@ -141,9 +126,19 @@ int main()
         glClearColor(0.478f, 0, 0.871f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(program);
+        trianglesShader.useShader();
+
+        // ---- uncomment for color changing (change in frag shader required):) ------
+        float time { static_cast<float>(glfwGetTime()) };
+        float greenVal { sin(time * 0.7f) / 2.0f + 0.6f };
+        float redVal { cos(time * 0.5f) / 2.f + 0.6f};
+        float blueVal { sin(time) / 2.f + 0.6f };
+        GLint vertexColorLoc { glGetUniformLocation(trianglesShader.getProgram(), "color") };
+        glUniform4f(vertexColorLoc, redVal, greenVal, blueVal, 1.0f);
+        
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glBindVertexArray(VAO_2);
         glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -157,7 +152,6 @@ int main()
     glDeleteBuffers(1, &VBO_2);
     glDeleteVertexArrays(1, &VAO);
     glDeleteVertexArrays(1, &VAO_2);
-    glDeleteProgram(program);
 
     glfwTerminate();
     return 0;

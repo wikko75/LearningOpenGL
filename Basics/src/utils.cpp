@@ -26,6 +26,10 @@ void initLog() noexcept
     {
         fmt::print(fg(fmt::color::yellow), "OpenGL profile: Compatibility\n");
     }
+
+    int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    fmt::print(fg(fmt::color::yellow), "Maximum nr of vertex attributes supported: {}\n", nrAttributes);
 }
 
 
