@@ -30,6 +30,9 @@ Shader::Shader(const std::filesystem::path &vertexShaderPath, const std::filesys
     vertexBuffer << vertexShaderFile.rdbuf();
     fragmentBuffer << fragmentShaderFile.rdbuf();
 
+    vertexShaderFile.close();
+    fragmentShaderFile.close();
+
     std::string v_str { vertexBuffer.str() };
     std::string f_str { fragmentBuffer.str() };
 
