@@ -14,7 +14,7 @@ public:
 
     void bindTexture() const noexcept;
 
-    void setWrapMethod(GLint WRAP_S, GLint WRAP_R);
+    void setWrapMethod(GLint WRAP_S, GLint WRAP_T);
     
     void setFilterMethod(GLint MIN_FILTER, GLint MAG_FILTER);
 

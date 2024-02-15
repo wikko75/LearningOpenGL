@@ -10,7 +10,9 @@ Texture::Texture(const GLenum type, const std::filesystem::path& path, GLint LOD
     glBindTexture(type, this->id);
 
     std::string texFile { path.string() };
-    
+
+    fmt::print("{}\n", texFile);
+
     stbi_set_flip_vertically_on_load(true);  
     texData = stbi_load(texFile.c_str(), &(this->width), &(this->height), &(this->noOfChannels), 0);
 
@@ -48,11 +50,11 @@ void Texture::createTexture()
 }
 
 
-void Texture::setWrapMethod(GLint WRAP_S, GLint WRAP_R)
+void Texture::setWrapMethod(GLint WRAP_S, GLint WRAP_T)
 {
     glBindTexture(this->type, this->id);
     glTexParameteri(this->type, GL_TEXTURE_WRAP_S, WRAP_S);
-    glTexParameteri(this->type, GL_TEXTURE_WRAP_R, WRAP_R);
+    glTexParameteri(this->type, GL_TEXTURE_WRAP_T, WRAP_T);
 }
 
 
