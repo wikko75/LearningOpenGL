@@ -7,7 +7,7 @@ Repository of code I've written while learning **OpenGL** using [this](https://l
 * CMake
 * OpenGL development libraries
 * [vcpkg](https://vcpkg.io/en/getting-started) (for Windows)
-* fmt, GLEW, GLFW (installed on Linux)
+* fmt, GLEW, GLFW, GLM (installed on Linux)
 * C++ 17+
 
 ## Structure
