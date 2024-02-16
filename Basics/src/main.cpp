@@ -1,5 +1,3 @@
-#include <string>
-#include <filesystem>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <fmt/core.h>
@@ -7,6 +5,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
+#include <filesystem>
+#include <chrono>
+#include <random>
 #include "utils.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
@@ -30,7 +32,6 @@ int main()
 
 
     GLFWwindow* window { glfwCreateWindow(800, 600, "Learning OpenGL!", NULL, NULL) };
-
     glfwMakeContextCurrent(window);
 
     // GLEW sutup
@@ -50,7 +51,7 @@ int main()
 
 
     // ==================== shader setup ==========================
-
+    
     Shader trianglesShader { std::filesystem::current_path() / "shaders" / "triangleVertex.glsl",
                              std::filesystem::current_path() / "shaders" / "triangleFragment.glsl" };
 
@@ -74,6 +75,63 @@ int main()
         1.f, 1.0f,                    // tex coord
     };
 
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+
+    glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f), 
+    glm::vec3( 2.0f,  5.0f, -15.0f), 
+    glm::vec3(-1.5f, -2.2f, -2.5f),  
+    glm::vec3(-3.8f, -2.0f, -12.3f),  
+    glm::vec3( 2.4f, -0.4f, -3.5f),  
+    glm::vec3(-1.7f,  3.0f, -7.5f),  
+    glm::vec3( 1.3f, -2.0f, -2.5f),  
+    glm::vec3( 1.5f,  2.0f, -2.5f), 
+    glm::vec3( 1.5f,  0.2f, -1.5f), 
+    glm::vec3(-1.3f,  1.0f, -1.5f)  
+};
+
 
     // VAO setup 
     GLuint VAO;
@@ -84,14 +142,14 @@ int main()
     GLuint VBO;
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(upperTrianglesData), upperTrianglesData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // vertex attributes
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);  
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);  
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
+    // glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
+    // glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
     GLuint indices[] = {
@@ -126,42 +184,81 @@ int main()
     glUniform1i(glGetUniformLocation(trianglesShader.getProgram(), "inTexture1"), 1);
 
 
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // ------- config stuff --------
+    glEnable(GL_DEPTH_TEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    
+    std::random_device rd{};
+    std::mt19937 mt { rd() };
+    std::uniform_real_distribution u_rel_num { 0.f, 1.f };
+    float randomAngle { u_rel_num(mt) * 80 };
+    
+    // camera offset
+    float xShift {};
+    float zShift {};
+
     while (!glfwWindowShouldClose(window))
     {
         proccessInput(window);
         glfwPollEvents();
 
-        // ---- uncomment for color changing (change in frag shader required):) ------
         float time { static_cast<float>(glfwGetTime()) };
+        
+        // ------- background color -------
         float redVal { cos(time * 0.5f) / 2.f + 0.6f};
         float greenVal { sin(time * 0.7f) / 2.0f + 0.6f };
         float blueVal { sin(time) / 2.f + 0.6f };
 
         glClearColor(redVal, greenVal, blueVal, 0.761f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         trianglesShader.useShader();
 
         GLint vertexColorLoc { glGetUniformLocation(trianglesShader.getProgram(), "color") };
         glUniform4f(vertexColorLoc, redVal, greenVal, blueVal, 1.0f);
 
-
-        glm::mat4 trans { 1.0f };
-        trans = glm::rotate(trans, glm::radians(time * 10), { 0.0f, 0.0f, 1.0f });
-        trans = glm::scale(trans, { abs(sin(time)), abs(sin(time)), 1.0f });
-         
-        glUniformMatrix4fv(glGetUniformLocation(trianglesShader.getProgram(), "transformMtx"), 1, GL_FALSE, glm::value_ptr(trans));
-        
-        glBindVertexArray(VAO);
-
+        // ------- textures setup -------
         glActiveTexture(GL_TEXTURE0);
         scottTexture.bindTexture();
 
         glActiveTexture(GL_TEXTURE1);
         wallTexture.bindTexture();
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        // -------- WSAD movement --------
+        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            xShift -= 0.1f;
+        }
+        if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            xShift += 0.1f;
+        }
+        if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            zShift += 0.1f;
+        }
+        if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            zShift -= 0.1f;
+        }
+
+        // -------- cubes trans. and drawing --------
+        glBindVertexArray(VAO);
+        for (int i {0}; i < sizeof(cubePositions) / (cubePositions->length() * sizeof(float)); ++i)
+        {
+            glm::mat4 trans { 1.0f };
+            trans = glm::perspective(glm::radians(45.f), 4 / (float)3, 0.1f, 100.f);    // projection
+            trans = glm::translate(trans, glm::vec3{ 0.0f + xShift, 0.f, -4.5f + zShift });                     // view
+            trans = glm::translate(trans, cubePositions[i]);
+            trans = glm::rotate(trans, time * glm::radians(randomAngle * i + 10.f), {glm::vec3(1.0f, 0.3f, 0.5f) });   // model
+            trans = glm::scale(trans, { abs(sin(time)), abs(sin(time)),  abs(sin(time)) }); //model
+            
+            glUniformMatrix4fv(glGetUniformLocation(trianglesShader.getProgram(), "transformMtx"), 1, GL_FALSE, glm::value_ptr(trans));
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
 
         glfwSwapBuffers(window);  
     }
@@ -172,5 +269,6 @@ int main()
     glDeleteVertexArrays(1, &VAO);
 
     glfwTerminate();
+
     return 0;
 }
