@@ -12,7 +12,7 @@
 #include "utils.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
-
+#include "Camera.hpp"
 
 
 int main()
@@ -48,6 +48,7 @@ int main()
 
     glfwSetFramebufferSizeCallback(window, windowFramebufferSizeCallback);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
     // ==================== shader setup ==========================
@@ -193,10 +194,14 @@ int main()
     std::mt19937 mt { rd() };
     std::uniform_real_distribution u_rel_num { 0.f, 1.f };
     float randomAngle { u_rel_num(mt) * 80 };
+
+    float lastFrame {};
+    float deltaTime {};
     
-    // camera offset
-    float xShift {};
-    float zShift {};
+
+    // ------- camera setup --------
+    Camera camera { window,  800, 600, 0.f, -90.f, 0.05f, 3.5f, glm::vec3{ 0.0f, 0.f, 4.5f }, glm::vec3{ 0.0f, 0.0f, -1.0f } };
+
 
     while (!glfwWindowShouldClose(window))
     {
@@ -204,11 +209,13 @@ int main()
         glfwPollEvents();
 
         float time { static_cast<float>(glfwGetTime()) };
+        deltaTime = time - lastFrame;
+        lastFrame = time;
         
         // ------- background color -------
-        float redVal { cos(time * 0.5f) / 2.f + 0.6f};
-        float greenVal { sin(time * 0.7f) / 2.0f + 0.6f };
-        float blueVal { sin(time) / 2.f + 0.6f };
+        float redVal    { cos(time * 0.5f) / 2.f + 0.6f};
+        float greenVal  { sin(time * 0.7f) / 2.0f + 0.6f };
+        float blueVal   { sin(time) / 2.f + 0.6f };
 
         glClearColor(redVal, greenVal, blueVal, 0.761f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -226,39 +233,24 @@ int main()
         wallTexture.bindTexture();
 
 
-        // -------- WSAD movement --------
-        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        {
-            xShift -= 0.1f;
-        }
-        if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        {
-            xShift += 0.1f;
-        }
-        if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            zShift += 0.1f;
-        }
-        if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        {
-            zShift -= 0.1f;
-        }
+        camera.updatePosition(deltaTime);
+        camera.cameraLog();
 
         // -------- cubes trans. and drawing --------
         glBindVertexArray(VAO);
         for (int i {0}; i < sizeof(cubePositions) / (cubePositions->length() * sizeof(float)); ++i)
         {
             glm::mat4 trans { 1.0f };
+            glm::mat4 view { glm::lookAt(camera.getPosition(), camera.getPosition() + camera.getDirection(), { 0.0f, 1.0f, 0.0f }) };
             trans = glm::perspective(glm::radians(45.f), 4 / (float)3, 0.1f, 100.f);    // projection
-            trans = glm::translate(trans, glm::vec3{ 0.0f + xShift, 0.f, -4.5f + zShift });                     // view
-            trans = glm::translate(trans, cubePositions[i]);
-            trans = glm::rotate(trans, time * glm::radians(randomAngle * i + 10.f), {glm::vec3(1.0f, 0.3f, 0.5f) });   // model
-            trans = glm::scale(trans, { abs(sin(time)), abs(sin(time)),  abs(sin(time)) }); //model
+            trans = trans * view;     // view
+            trans = glm::translate(trans, cubePositions[i]);    // model
+            trans = glm::rotate(trans, time * glm::radians(randomAngle * i + 10.f),  glm::vec3(1.0f, 0.3f, 0.5f));   // model
+            // trans = glm::scale(trans, { abs(sin(time)), abs(sin(time)),  abs(sin(time)) }); //model
             
             glUniformMatrix4fv(glGetUniformLocation(trianglesShader.getProgram(), "transformMtx"), 1, GL_FALSE, glm::value_ptr(trans));
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-
 
         glfwSwapBuffers(window);  
     }
@@ -267,7 +259,6 @@ int main()
     // cleanup
     glDeleteBuffers(1, &VBO);
     glDeleteVertexArrays(1, &VAO);
-
     glfwTerminate();
 
     return 0;
