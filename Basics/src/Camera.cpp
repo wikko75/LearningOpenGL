@@ -32,6 +32,14 @@ void Camera::updatePosition(float deltaTime)  noexcept
     {
         cameraPosition -= this->speed * deltaTime * this->direction;
     }
+    if(glfwGetKey(this->window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        cameraPosition.y += this->speed * deltaTime;
+    }
+    if(glfwGetKey(this->window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+    {
+        cameraPosition.y -= this->speed * deltaTime;
+    }
 
     this->setPosition(cameraPosition);
 }
@@ -137,7 +145,7 @@ void Camera::cameraLog() const noexcept
 
 void Camera::cursorPosCallback(GLFWwindow *window, double xpos, double ypos)
 {
-    fmt::print("{}\n", firstMovement);
+    // fmt::print("{}\n", firstMovement);
     if (firstMovement)
     {
         lastX = static_cast<float>(xpos);
