@@ -13,6 +13,7 @@ Repository of code I've written while learning **OpenGL** using [this](https://l
 ## Structure
 Each project covers different aspect(s) of **OpenGL :**
 * Basics
+* Lighting
 ## Build and run
 ```powershell
 cd [project_name]
