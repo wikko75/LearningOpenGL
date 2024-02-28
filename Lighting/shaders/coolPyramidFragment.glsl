@@ -11,7 +11,7 @@ uniform vec3 lightSrcColor;
 
 void main()
 {
-    float ambientStrength = .3;
+    float ambientStrength = .2;
     float specularStrength = 0.8;
     vec4 ambient = vec4(ambientStrength * lightSrcColor, 1.0);
 
@@ -20,7 +20,7 @@ void main()
     vec4 diffuse = vec4( max( dot(lightDir, normalVec), 0.0  ) * lightSrcColor, 1.0);
 
     vec3 lightRef = reflect(-lightDir, normalVec);
-    vec4 specular = pow( max( dot(vec3(0.0), lightRef), 0.0 ), 200 ) * vec4(lightSrcColor, 1.0) * specularStrength;
+    vec4 specular = pow( max( dot(normalize(-fragPos), lightRef), 0.0 ), 200 ) * vec4(lightSrcColor, 1.0) * specularStrength;
 
 
     outVertexColor = (ambient + diffuse + specular) * vertexColor;

@@ -213,48 +213,48 @@ int main()
     };
     
     // TODO optimize - remove redundent data
-    float floorVerticies[] = {
-        -0.5f, -0.5f, -0.2f,  0.0f, 0.0f,
-        0.5f, -0.5f, -0.2f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.2f,  1.0f, 1.0f,
-        0.5f,  0.5f, -0.2f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.2f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.2f,  0.0f, 0.0f,
+    float floorVerticies[] = {              // pos | normal | tex 
+       -0.5f, -0.5f, -0.2f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,     
+        0.5f, -0.5f, -0.2f,  0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.2f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.2f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
+       -0.5f,  0.5f, -0.2f,  0.0f, 0.0f, -1.0f,  0.0f, 1.0f,
+       -0.5f, -0.5f, -0.2f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
 
-        -0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
-        0.5f, -0.5f,  0.0f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.0f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.0f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
+       -0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+       -0.5f,  0.5f,  0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,
+       -0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
 
-        -0.5f,  0.5f,  0.0f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.2f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.2f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.2f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.0f,  1.0f, 0.0f,
+       -0.5f,  0.5f,  0.0f, -1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+       -0.5f,  0.5f, -0.2f, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+       -0.5f, -0.5f, -0.2f, -1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+       -0.5f, -0.5f, -0.2f, -1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+       -0.5f, -0.5f,  0.0f, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+       -0.5f,  0.5f,  0.0f, -1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
 
-        0.5f,  0.5f,  0.0f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.2f,  1.0f, 1.0f,
-        0.5f, -0.5f, -0.2f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.2f,  0.0f, 1.0f,
-        0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
-        0.5f,  0.5f,  0.0f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.2f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.2f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.2f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.2f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.2f,  1.0f, 1.0f,
-        0.5f, -0.5f,  0.0f,  1.0f, 0.0f,
-        0.5f, -0.5f,  0.0f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.2f,  0.0f, 1.0f,
+       -0.5f, -0.5f, -0.2f,  0.0f,-1.0f, 0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.2f,  0.0f,-1.0f, 0.0f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.0f,  0.0f,-1.0f, 0.0f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.0f,  0.0f,-1.0f, 0.0f,  1.0f, 0.0f,
+       -0.5f, -0.5f,  0.0f,  0.0f,-1.0f, 0.0f,  0.0f, 0.0f,
+       -0.5f, -0.5f, -0.2f,  0.0f,-1.0f, 0.0f,  0.0f, 1.0f,
 
-        -0.5f,  0.5f, -0.2f,  0.0f, 1.0f,
-        0.5f,  0.5f, -0.2f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.0f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.0f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.0f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.2f,  0.0f, 1.0f
+       -0.5f,  0.5f, -0.2f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+        0.5f,  0.5f, -0.2f,  0.0f, 1.0f, 0.0f,   1.0f, 1.0f,
+        0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+        0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+       -0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 0.0f,
+       -0.5f,  0.5f, -0.2f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f
     };
 
 
@@ -287,10 +287,12 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, floorVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(floorVerticies), &floorVerticies, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
 
     GLuint coolPyramidVAO;
@@ -360,13 +362,13 @@ int main()
     float deltaTime {};
 
     // float floorYPos {-2.0f};
-    int floorWidth  {5};
-    int floorDepth  {5};
+    int floorWidth  {14};
+    int floorDepth  {14};
     float cellWidth {1.0f};
     float cellDepth {1.0f};
 
     // ======== camera setup ========
-    Camera camera { window,  800, 600, 0.f, -90.f, 0.05f, 5.5f, glm::vec3{ 0.0f, 1.5f, 4.5f }};
+    Camera camera { window,  800, 600, 0.f, -90.f, 0.05f, 5.5f, glm::vec3{ 0.0f, 3.5f, 10.5f }};
 
 
     glm::mat4 model { 1.f };
@@ -442,7 +444,7 @@ int main()
         glBindVertexArray(coolPyramidVAO);
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, { -1.f, 0.f, 0.f});
+        model = glm::translate(model, { 0.f, .6f, 0.f});
         model = glm::scale(model, { 1.5f, 4.5f, 1.5f});
 
         coolPyramidShader.setUniformMatrix4f("modelMtx", GL_FALSE, glm::value_ptr(model));
@@ -467,7 +469,7 @@ int main()
         glBindVertexArray(cubeVAO);
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, { -1.f, -.15f, 0.f }); 
+        model = glm::translate(model, { 0.f, .15f, 0.f }); 
         model = glm::rotate(model, 1 * time, glm::vec3(0.f, 1.f, 0.f)); 
         model = glm::scale(model, {3.5f + cos(time) / 2, .3f, 3.5f + cos(time) / 2});
 
@@ -486,25 +488,18 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
-        lightingShader.useShader();
+
         glBindVertexArray(cubeVAO);
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, { -1.f, -.5f, 0.f }); 
+        model = glm::translate(model, { 0.f, .45f, 0.f }); 
         model = glm::rotate(model, -1 * time, glm::vec3(0.f, 1.f, 0.f)); 
         model = glm::scale(model, {3.5f + sin(time) / 2, .3f, 3.5f + sin(time) / 2});
 
         normalMatrix = glm::transpose(glm::inverse(glm::mat3(model))); //! world coor
 
         lightingShader.setUniformMatrix4f("modelMtx", GL_FALSE, glm::value_ptr(model));
-        lightingShader.setUniformMatrix4f("viewMtx", GL_FALSE, glm::value_ptr(view));
-        lightingShader.setUniformMatrix4f("projectionMtx", GL_FALSE, glm::value_ptr(projection));
         lightingShader.setUniformMatrix3f("normalMtx", GL_FALSE, glm::value_ptr(normalMatrix));
-
-        lightingShader.setUniform3f("lightSrcColor", lightColor.x, lightColor.y, lightColor.z);
-        lightingShader.setUniform3f("lightSrcPos", lightPos.x, lightPos.y, lightPos.z);
-        lightingShader.setUniform3f("objColor", 1.f, 0.2f, 0.3f);
-        lightingShader.setUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -516,11 +511,16 @@ int main()
         glActiveTexture(GL_TEXTURE0);
         floorTexture.bindTexture();
 
+        floorShader.setUniformMatrix4f("view", GL_FALSE, glm::value_ptr(view));
+        floorShader.setUniformMatrix4f("projection", GL_FALSE, glm::value_ptr(projection));
+        floorShader.setUniform3f("lightColor", lightColor.x, lightColor.y, lightColor.z);
+        floorShader.setUniform3f("lightWorldPos", lightPos.x, lightPos.y, lightPos.z);
 
         glBindVertexArray(floorVAO);
 
         int xOffset { floorWidth / 2 };
         int zOffset { floorDepth / 2 };
+
 
         for (int i {0}; i < floorDepth; ++i)
         {
@@ -530,11 +530,12 @@ int main()
                 model = glm::translate(model, glm::vec3(j * cellWidth - xOffset , 0.0f, i * cellDepth - zOffset));
                 model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1.0f, 0.0f, 0.0f ));
 
-                floorShader.setUniformMatrix4f( "model", GL_FALSE, glm::value_ptr(model));
-                floorShader.setUniformMatrix4f( "view", GL_FALSE, glm::value_ptr(view));
-                floorShader.setUniformMatrix4f( "projection", GL_FALSE, glm::value_ptr(projection));
+                normalMtx = glm::transpose(glm::inverse(glm::mat3(view * model)));
 
-                // glDrawArrays(GL_TRIANGLES, 0, 36);
+                floorShader.setUniformMatrix4f("model", GL_FALSE, glm::value_ptr(model));
+                floorShader.setUniformMatrix3f("normalMtx", GL_FALSE, glm::value_ptr(normalMtx));
+
+                glDrawArrays(GL_TRIANGLES, 0, 36);
             }
         }
 

@@ -25,7 +25,7 @@ void main()
     vec3 cameraDir = normalize(cameraPos - fragPos);
     vec3 refDir = reflect(-lightDir, norm);
 
-    vec3 specular = pow(max(dot(cameraDir, refDir), 0.0), 8) * specularStrength * lightSrcColor;
+    vec3 specular = pow(max(dot(cameraDir, refDir), 0.0), 100) * specularStrength * lightSrcColor;
 
     outColor =  vec4((ambient + diffusion + specular) * objColor, 1.0);
 }
