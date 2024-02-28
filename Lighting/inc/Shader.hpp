@@ -14,19 +14,13 @@ public:
 
     GLuint getProgram() const noexcept;
 
-    // enum UniformType
-    // {
-    //     INT,
-    //     FLOAT,
-    //     VEC3f,
-    //     VEC4f,
-    //     MTX1f,
-    //     MTX2f,
-    //     MTX3f,
-    //     MTX4f
-    // };
+    void setUniform3f(const char* name, float v0, float v1, float v2) const;
 
-    // void setsetUniform(UniformType type, )
+    void setUniform4f(const char* name, float v0, float v1, float v2, float v3) const;
+
+    void setUniformMatrix4f(const char* name, GLboolean transpose, const GLfloat *value) const;
+
+    void setUniformMatrix3f(const char* name, GLboolean transpose, const GLfloat *value) const;
 
     ~Shader() = default;
 

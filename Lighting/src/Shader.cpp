@@ -67,7 +67,6 @@ Shader::Shader(const std::filesystem::path &vertexShaderPath, const std::filesys
     glDeleteShader(fragmentShader);
 }
 
-
 void Shader::useShader() const noexcept
 {
     glUseProgram(this->program);
@@ -77,3 +76,24 @@ GLuint Shader::getProgram() const noexcept
 {
     return this->program;
 }
+
+void Shader::setUniform3f(const char* name, float v0, float v1, float v2) const
+{
+    glUniform3f(glGetUniformLocation(this->program, name), v0, v1, v2);
+}
+
+void Shader::setUniform4f(const char* name, float v0, float v1, float v2, float v3) const
+{
+    glUniform4f(glGetUniformLocation(this->program, name), v0, v1, v2, v3);
+}
+
+void Shader::setUniformMatrix3f(const char* name, GLboolean transpose, const GLfloat *value) const
+{
+    glUniformMatrix3fv(glGetUniformLocation(this->program, name), 1, transpose, value);
+}
+
+void Shader::setUniformMatrix4f(const char* name, GLboolean transpose, const GLfloat *value) const
+{
+    glUniformMatrix4fv(glGetUniformLocation(this->program, name), 1, transpose, value);
+}
+

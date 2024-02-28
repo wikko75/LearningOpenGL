@@ -87,8 +87,8 @@ int main()
                             std::filesystem::current_path() / "shaders" / "lightingFragment.glsl"};
 
 
-    Shader cubeLightShader { std::filesystem::current_path() / "shaders" / "lightingVertex.glsl",
-                             std::filesystem::current_path() / "shaders" / "cubeLightFragment.glsl"};
+    Shader pointLightShader { std::filesystem::current_path() / "shaders" / "cubeVertex.glsl",
+                             std::filesystem::current_path() / "shaders" / "cubeFragment.glsl"};
 
 
 
@@ -330,8 +330,7 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
     glEnableVertexAttribArray(0);
-    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    // glEnableVertexAttribArray(1);
+
 
 
     // ===========textures setup =============
@@ -417,7 +416,7 @@ int main()
 
         // ======== light source drawing ========
 
-        cubeLightShader.useShader();
+        pointLightShader.useShader();
         glBindVertexArray(lightVAO);
 
         glm::vec3 lightPos { -5 *  sin(time), 2.f, 5 * cos(time) };
@@ -428,11 +427,10 @@ int main()
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.3f));
 
-        glUniformMatrix4fv(glGetUniformLocation(cubeLightShader.getProgram(), "modelMtx"), 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(glGetUniformLocation(cubeLightShader.getProgram(), "viewMtx"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(cubeLightShader.getProgram(), "projectionMtx"), 1, GL_FALSE, glm::value_ptr(projection));
-
-        glUniform3f(glGetUniformLocation(cubeLightShader.getProgram(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+        pointLightShader.setUniformMatrix4f("modelMtx", GL_FALSE, glm::value_ptr(model));
+        pointLightShader.setUniformMatrix4f("viewMtx", GL_FALSE, glm::value_ptr(view));
+        pointLightShader.setUniformMatrix4f("projectionMtx", GL_FALSE, glm::value_ptr(projection));
+        pointLightShader.setUniform3f("color", lightColor.x, lightColor.y, lightColor.z);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -447,16 +445,16 @@ int main()
         model = glm::translate(model, { -1.f, 0.f, 0.f});
         model = glm::scale(model, { 1.5f, 4.5f, 1.5f});
 
-        glUniformMatrix4fv(glGetUniformLocation(coolPyramidShader.getProgram(), "modelMtx"), 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(glGetUniformLocation(coolPyramidShader.getProgram(), "viewMtx"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(coolPyramidShader.getProgram(), "projectionMtx"), 1, GL_FALSE, glm::value_ptr(projection));
+        coolPyramidShader.setUniformMatrix4f("modelMtx", GL_FALSE, glm::value_ptr(model));
+        coolPyramidShader.setUniformMatrix4f("viewMtx", GL_FALSE, glm::value_ptr(view));
+        coolPyramidShader.setUniformMatrix4f("projectionMtx", GL_FALSE, glm::value_ptr(projection));
 
-        glUniform3f(glGetUniformLocation(coolPyramidShader.getProgram(), "lightSrcColor"), lightColor.x, lightColor.y, lightColor.z);
-        glUniform3f(glGetUniformLocation(coolPyramidShader.getProgram(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+        coolPyramidShader.setUniform3f("lightSrcColor", lightColor.x, lightColor.y, lightColor.z);
+        coolPyramidShader.setUniform3f("lightPos", lightPos.x, lightPos.y, lightPos.z);
 
         glm::mat3 normalMtx { glm::transpose(glm::inverse(glm::mat3(view * model))) }; //! view coor
 
-        glUniformMatrix3fv(glGetUniformLocation(coolPyramidShader.getProgram(), "normalMtx"), 1, GL_FALSE, glm::value_ptr(normalMtx));
+        coolPyramidShader.setUniformMatrix3f("normalMtx", GL_FALSE, glm::value_ptr(normalMtx));
 
         glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_BYTE, 0);
 
@@ -475,15 +473,15 @@ int main()
 
         normalMatrix = glm::transpose(glm::inverse(glm::mat3(model))); //! world coor
 
-        glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "modelMtx"), 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "viewMtx"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "projectionMtx"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix3fv(glGetUniformLocation(lightingShader.getProgram(), "normalMtx"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
+        lightingShader.setUniformMatrix4f("modelMtx", GL_FALSE, glm::value_ptr(model));
+        lightingShader.setUniformMatrix4f("viewMtx", GL_FALSE, glm::value_ptr(view));
+        lightingShader.setUniformMatrix4f("projectionMtx", GL_FALSE, glm::value_ptr(projection));
+        lightingShader.setUniformMatrix3f("normalMtx", GL_FALSE, glm::value_ptr(normalMatrix));
 
-        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "lightSrcColor"), lightColor.x, lightColor.y, lightColor.z);
-        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "objColor"), 1.f, 0.2f, 0.3f);
-        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "lightSrcPos"), lightPos.x, lightPos.y, lightPos.z);
-        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "cameraPos"), camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+        lightingShader.setUniform3f("lightSrcColor", lightColor.x, lightColor.y, lightColor.z);
+        lightingShader.setUniform3f("lightSrcPos", lightPos.x, lightPos.y, lightPos.z);
+        lightingShader.setUniform3f("objColor", 1.f, 0.2f, 0.3f);
+        lightingShader.setUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -498,15 +496,15 @@ int main()
 
         normalMatrix = glm::transpose(glm::inverse(glm::mat3(model))); //! world coor
 
-        glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "modelMtx"), 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "viewMtx"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "projectionMtx"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix3fv(glGetUniformLocation(lightingShader.getProgram(), "normalMtx"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
+        lightingShader.setUniformMatrix4f("modelMtx", GL_FALSE, glm::value_ptr(model));
+        lightingShader.setUniformMatrix4f("viewMtx", GL_FALSE, glm::value_ptr(view));
+        lightingShader.setUniformMatrix4f("projectionMtx", GL_FALSE, glm::value_ptr(projection));
+        lightingShader.setUniformMatrix3f("normalMtx", GL_FALSE, glm::value_ptr(normalMatrix));
 
-        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "lightSrcColor"), lightColor.x, lightColor.y, lightColor.z);
-        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "objColor"), 1.f, 0.2f, 0.3f);
-        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "lightSrcPos"), lightPos.x, lightPos.y, lightPos.z);
-        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "cameraPos"), camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+        lightingShader.setUniform3f("lightSrcColor", lightColor.x, lightColor.y, lightColor.z);
+        lightingShader.setUniform3f("lightSrcPos", lightPos.x, lightPos.y, lightPos.z);
+        lightingShader.setUniform3f("objColor", 1.f, 0.2f, 0.3f);
+        lightingShader.setUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -532,9 +530,9 @@ int main()
                 model = glm::translate(model, glm::vec3(j * cellWidth - xOffset , 0.0f, i * cellDepth - zOffset));
                 model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1.0f, 0.0f, 0.0f ));
 
-                glUniformMatrix4fv(glGetUniformLocation(floorShader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-                glUniformMatrix4fv(glGetUniformLocation(floorShader.getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
-                glUniformMatrix4fv(glGetUniformLocation(floorShader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+                floorShader.setUniformMatrix4f( "model", GL_FALSE, glm::value_ptr(model));
+                floorShader.setUniformMatrix4f( "view", GL_FALSE, glm::value_ptr(view));
+                floorShader.setUniformMatrix4f( "projection", GL_FALSE, glm::value_ptr(projection));
 
                 // glDrawArrays(GL_TRIANGLES, 0, 36);
             }
