@@ -13,7 +13,7 @@ uniform vec3 cameraPos;
 
 void main()
 {
-    float ambientStrenth = 0.2;
+    float ambientStrenth = 0.1;
     float specularStrength = 0.5;
 
     vec3 ambient = vec3(ambientStrenth * lightSrcColor);
@@ -25,7 +25,7 @@ void main()
     vec3 cameraDir = normalize(cameraPos - fragPos);
     vec3 refDir = reflect(-lightDir, norm);
 
-    vec3 specular = pow(max(dot(cameraDir, refDir), 0.0), 250) * specularStrength * lightSrcColor;
+    vec3 specular = pow(max(dot(cameraDir, refDir), 0.0), 8) * specularStrength * lightSrcColor;
 
     outColor =  vec4((ambient + diffusion + specular) * objColor, 1.0);
 }

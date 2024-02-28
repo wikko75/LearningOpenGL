@@ -2,7 +2,9 @@
 
 out vec4 outEmittedColor;
 
+uniform vec3 lightColor;
+
 void main()
 {
-    outEmittedColor = vec4(1.0);
+    outEmittedColor = vec4(lightColor, 1.0);
 }

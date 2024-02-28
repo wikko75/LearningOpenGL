@@ -97,19 +97,75 @@ int main()
     float coolPyramidVertices[] = {
         -0.5f, 0.f, 0.5f,             // front left
         0.976f, 0.109f, 0.043f, 0.5f, // red
+         0.f,  1.f,  1.f,
         
         0.5f, 0.f, 0.5f,               // front right
-        0.603f, 1.0f, 0.101f, 1.0f,   // green
+        0.603f, 1.0f, 0.101f, 1.0f,   //  green
+         0.f,  1.f,  1.f,
 
-        0.f,  0.8f, 0.0f,             // middle
+        0.f,  0.8f, 0.0f,             // front middle
         0.046f, 0.109f, 0.976f, 0.5f, // blue
+         0.f,  1.f,  1.f,
+
+
 
         -0.5f, 0.f, -0.5f,             // back left
         0.98f, 0.804f, 0.106f, 1.0f,  // yellow
+        0.f, 1.f, -1.f,
 
         0.5f, 0.0, -0.5f,               // back right
-        0.729f, 0.035f, 0.925f, 1.f   // violet
+        0.729f, 0.035f, 0.925f, 1.f,   // violet
+        0.f, 1.f, -1.f,
+
+        0.f,  0.8f, 0.0f,             // back middle
+        0.046f, 0.109f, 0.976f, 0.5f, // blue
+        0.f,  1.f,  -1.f,
+
+
+
+        -0.5f, 0.f, -0.5f,             // back left
+        0.98f, 0.804f, 0.106f, 1.0f,   // yellow
+        -1.f, 1.f, 0.f,
+
+        -0.5f, 0.f, 0.5f,              // front left
+        0.976f, 0.109f, 0.043f, 0.5f,  // red
+        -1.f, 1.f, 0.f,
+
+        0.f,  0.8f, 0.0f,              // left  middle
+        0.046f, 0.109f, 0.976f, 0.5f,  // blue
+        -1.f, 1.f, 0.f,
+
+
+        0.5f, 0.f, 0.5f,               // front right
+        0.603f, 1.0f, 0.101f, 1.0f,    //  green
+        1.f,  1.f,  0.f,
+
+        0.5f, 0.0, -0.5f,              // back right
+        0.729f, 0.035f, 0.925f, 1.f,   // violet
+        1.f,  1.f,  0.f,
+
+        0.f,  0.8f, 0.0f,              // right  middle
+        0.046f, 0.109f, 0.976f, 0.5f,  // blue
+        1.f,  1.f,  0.f,
+
+
+        -0.5f, 0.f, 0.5f,              // front left
+        0.976f, 0.109f, 0.043f, 0.5f,  // red
+        0.f,  0.f,  -1.f,
+
+        0.5f, 0.f, 0.5f,               // front right
+        0.603f, 1.0f, 0.101f, 1.0f,    //  green
+        0.f,  0.f,  -1.f,
+
+        0.5f, 0.0, -0.5f,              // back right
+        0.729f, 0.035f, 0.925f, 1.f,   // violet
+        0.f,  0.f,  -1.f,
+
+        -0.5f, 0.f, -0.5f,             // back left
+        0.98f, 0.804f, 0.106f, 1.0f,   // yellow
+        0.f,  0.f,  -1.f,
     };
+
 
     // TODO optimize - remove redundent data
     float cubeVertices[] = {
@@ -247,12 +303,12 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(coolPyramidVertices), &coolPyramidVertices, GL_STATIC_DRAW);
 
     GLubyte coolPyramidIndices[] = {
-        0, 1, 2,  // front
-        2, 3, 4,  // back
-        0, 3, 2,  // left
-        2, 1, 4,  // right
-        0, 1, 3,  // bottom
-        3, 4, 1   // bottom
+        0, 1, 2,    // front
+        3, 4, 5,    // back
+        6, 7, 8,    // left
+        9, 10, 11,  // right
+        12, 13, 14, // bottom
+        14, 15, 12  // bottom
     };
 
     GLuint coolPyramidEBO;
@@ -260,10 +316,12 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, coolPyramidEBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(coolPyramidIndices), coolPyramidIndices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(7 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
 
     GLuint lightVAO;
@@ -317,6 +375,8 @@ int main()
     glm::mat4 projection {};
     glm::mat3 normalMatrix {};
 
+    glm::vec3 lightColor { 1.f, 1.f, 1.f };
+
     while (!glfwWindowShouldClose(window))
     {
         proccessInput(window);
@@ -355,28 +415,12 @@ int main()
 
 
 
-        // ======== pyramid drawing ========
-
-        coolPyramidShader.useShader();
-        glBindVertexArray(coolPyramidVAO);
-
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, { -1.f, 0.f, 0.f});
-
-        glUniformMatrix4fv(glGetUniformLocation(coolPyramidShader.getProgram(), "modelMtx"), 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(glGetUniformLocation(coolPyramidShader.getProgram(), "viewMtx"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(coolPyramidShader.getProgram(), "projectionMtx"), 1, GL_FALSE, glm::value_ptr(projection));
-
-        // glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_BYTE, 0);
-
-
-
         // ======== light source drawing ========
 
         cubeLightShader.useShader();
         glBindVertexArray(lightVAO);
 
-        glm::vec3 lightPos { -3 *  sin(time), 1.f, 3 * cos(time) };
+        glm::vec3 lightPos { -5 *  sin(time), 2.f, 5 * cos(time) };
 
         fmt::println("Time elapsed: {}", time);
 
@@ -388,34 +432,84 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(cubeLightShader.getProgram(), "viewMtx"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(cubeLightShader.getProgram(), "projectionMtx"), 1, GL_FALSE, glm::value_ptr(projection));
 
+        glUniform3f(glGetUniformLocation(cubeLightShader.getProgram(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 
-        // ======== cube drawing ========
+        // ======== pyramid drawing ========
+
+        coolPyramidShader.useShader();
+        glBindVertexArray(coolPyramidVAO);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, { -1.f, 0.f, 0.f});
+        model = glm::scale(model, { 1.5f, 4.5f, 1.5f});
+
+        glUniformMatrix4fv(glGetUniformLocation(coolPyramidShader.getProgram(), "modelMtx"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(coolPyramidShader.getProgram(), "viewMtx"), 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(glGetUniformLocation(coolPyramidShader.getProgram(), "projectionMtx"), 1, GL_FALSE, glm::value_ptr(projection));
+
+        glUniform3f(glGetUniformLocation(coolPyramidShader.getProgram(), "lightSrcColor"), lightColor.x, lightColor.y, lightColor.z);
+        glUniform3f(glGetUniformLocation(coolPyramidShader.getProgram(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
+        glm::mat3 normalMtx { glm::transpose(glm::inverse(glm::mat3(view * model))) }; //! view coor
+
+        glUniformMatrix3fv(glGetUniformLocation(coolPyramidShader.getProgram(), "normalMtx"), 1, GL_FALSE, glm::value_ptr(normalMtx));
+
+        glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_BYTE, 0);
+
+
+
+
+        // ======== bottom platforms drawing ========
 
         lightingShader.useShader();
         glBindVertexArray(cubeVAO);
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, { 0.f, 0.5f, 0.f }); 
-        model = glm::rotate(model, glm::radians(45.f), glm::vec3(1.f, 0.f, 0.f)); 
-        model = glm::rotate(model, 2 * time, glm::vec3(0.f, 1.f, 0.f)); 
-        model = glm::scale(model, {.5f, 3.5f, .3f});
+        model = glm::translate(model, { -1.f, -.15f, 0.f }); 
+        model = glm::rotate(model, 1 * time, glm::vec3(0.f, 1.f, 0.f)); 
+        model = glm::scale(model, {3.5f + cos(time) / 2, .3f, 3.5f + cos(time) / 2});
 
-        normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
+        normalMatrix = glm::transpose(glm::inverse(glm::mat3(model))); //! world coor
 
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "modelMtx"), 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "viewMtx"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "projectionMtx"), 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix3fv(glGetUniformLocation(lightingShader.getProgram(), "normalMtx"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
 
-        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "lightSrcColor"), 1.f, 1.f, 1.f);
+        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "lightSrcColor"), lightColor.x, lightColor.y, lightColor.z);
         glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "objColor"), 1.f, 0.2f, 0.3f);
         glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "lightSrcPos"), lightPos.x, lightPos.y, lightPos.z);
         glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "cameraPos"), camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+        lightingShader.useShader();
+        glBindVertexArray(cubeVAO);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, { -1.f, -.5f, 0.f }); 
+        model = glm::rotate(model, -1 * time, glm::vec3(0.f, 1.f, 0.f)); 
+        model = glm::scale(model, {3.5f + sin(time) / 2, .3f, 3.5f + sin(time) / 2});
+
+        normalMatrix = glm::transpose(glm::inverse(glm::mat3(model))); //! world coor
+
+        glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "modelMtx"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "viewMtx"), 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(glGetUniformLocation(lightingShader.getProgram(), "projectionMtx"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix3fv(glGetUniformLocation(lightingShader.getProgram(), "normalMtx"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
+
+        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "lightSrcColor"), lightColor.x, lightColor.y, lightColor.z);
+        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "objColor"), 1.f, 0.2f, 0.3f);
+        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "lightSrcPos"), lightPos.x, lightPos.y, lightPos.z);
+        glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "cameraPos"), camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
 
         // ========== floor drawing ==========
