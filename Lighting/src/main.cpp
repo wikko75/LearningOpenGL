@@ -368,7 +368,7 @@ int main()
     float cellDepth {1.0f};
 
     // ======== camera setup ========
-    Camera camera { window,  800, 600, 0.f, -90.f, 0.05f, 5.5f, glm::vec3{ 0.0f, 3.5f, 10.5f }};
+    Camera camera { window,  800, 600, -7.f, -131.f, 0.05f, 5.5f, glm::vec3{ 7.f, 3.5f, 8.5f }};
 
 
     glm::mat4 model { 1.f };
@@ -377,9 +377,14 @@ int main()
     glm::mat3 normalMatrix {};
 
     glm::vec3 lightColor { 1.f, 1.f, 1.f };
+    float colorChangeSpeed { 1.f };
 
     while (!glfwWindowShouldClose(window))
     {
+        float time { static_cast<float>(glfwGetTime()) };
+        deltaTime = time - lastFrame;
+        lastFrame = time;
+
         proccessInput(window);
 
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
@@ -399,11 +404,34 @@ int main()
             --floorWidth;
         }
 
-        glfwPollEvents();
+        // simple light color change
+        if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && lightColor.x < 1.f)
+        {
+            lightColor.x += colorChangeSpeed * deltaTime;
+        }
+        if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS && lightColor.x > 0.f)
+        {
+            lightColor.x -= colorChangeSpeed * deltaTime;
+        }
+        if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && lightColor.y < 1.f)
+        {
+            lightColor.y += colorChangeSpeed * deltaTime;
+        }
+        if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS && lightColor.y > 0.f)
+        {
+            lightColor.y -= colorChangeSpeed * deltaTime;
+        }
+        if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && lightColor.z < 1.f)
+        {
+            lightColor.z += colorChangeSpeed * deltaTime;
+        }
+        if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS && lightColor.z > 0.f)
+        {
+            lightColor.z -= colorChangeSpeed * deltaTime;
+        }
 
-        float time { static_cast<float>(glfwGetTime()) };
-        deltaTime = time - lastFrame;
-        lastFrame = time;
+
+        glfwPollEvents();
 
         camera.updatePosition(deltaTime);
         camera.cameraLog();
@@ -424,6 +452,7 @@ int main()
         glm::vec3 lightPos { -5 *  sin(time), 2.f, 5 * cos(time) };
 
         fmt::println("Time elapsed: {}", time);
+        fmt::println("Light RGB: [{}, {}, {}]\n", lightColor.x, lightColor.y, lightColor.z);
 
         model = glm::mat4(1.f);
         model = glm::translate(model, lightPos);
@@ -480,9 +509,16 @@ int main()
         lightingShader.setUniformMatrix4f("projectionMtx", GL_FALSE, glm::value_ptr(projection));
         lightingShader.setUniformMatrix3f("normalMtx", GL_FALSE, glm::value_ptr(normalMatrix));
 
-        lightingShader.setUniform3f("lightSrcColor", lightColor.x, lightColor.y, lightColor.z);
-        lightingShader.setUniform3f("lightSrcPos", lightPos.x, lightPos.y, lightPos.z);
-        lightingShader.setUniform3f("objColor", 1.f, 0.2f, 0.3f);
+        lightingShader.setUniform3f("light.position", lightPos.x, lightPos.y, lightPos.z);
+        lightingShader.setUniform3f("light.ambient", lightColor.x * 0.1f, lightColor.y * 0.1f, lightColor.z * 0.1f);
+        lightingShader.setUniform3f("light.diffuse", lightColor.x, lightColor.y, lightColor.z);
+        lightingShader.setUniform3f("light.specular", lightColor.x * .5f, lightColor.y * .5f, lightColor.z *.5f);
+
+        lightingShader.setUniform3f("material.ambient", 0.3f, 0.3f, 0.3f);
+        lightingShader.setUniform3f("material.diffuse", 1.f, 0.2f, 0.3f);
+        lightingShader.setUniform3f("material.specular", 1.f, 0.2f, 0.3f);
+        lightingShader.setUniformf("material.shinness", 100.f);
+
         lightingShader.setUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);

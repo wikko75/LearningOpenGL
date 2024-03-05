@@ -14,6 +14,8 @@ public:
 
     GLuint getProgram() const noexcept;
 
+    void setUniformf(const char* name, float v0) const;
+
     void setUniform3f(const char* name, float v0, float v1, float v2) const;
 
     void setUniform4f(const char* name, float v0, float v1, float v2, float v3) const;
@@ -23,8 +25,6 @@ public:
     void setUniformMatrix3f(const char* name, GLboolean transpose, const GLfloat *value) const;
 
     ~Shader() = default;
-
-
 
 private:
     GLuint program;

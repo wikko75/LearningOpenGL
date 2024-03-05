@@ -77,6 +77,11 @@ GLuint Shader::getProgram() const noexcept
     return this->program;
 }
 
+void Shader::setUniformf(const char* name, float v0) const
+{
+    glUniform1f(glGetUniformLocation(this->program, name), v0);
+}
+
 void Shader::setUniform3f(const char* name, float v0, float v1, float v2) const
 {
     glUniform3f(glGetUniformLocation(this->program, name), v0, v1, v2);
