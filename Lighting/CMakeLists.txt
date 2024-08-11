@@ -14,6 +14,9 @@ find_package(glfw3 REQUIRED)
 # GLEW setup
 find_package(GLEW REQUIRED)
 
+# GLM setup
+find_package(glm REQUIRED)
+
 file(GLOB SOURCE_FILES "src/*.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
